@@ -7,16 +7,20 @@ import socket
 import re
 import os
 import sys
+import requests
+from tzlocal import get_localzone
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
 
 from controllers import (
-    getInstalledApps,
     getAssetInfo,
     getClockSyncInfo,
     getControlOfInternet,
+    getApplicationsInfo,
+    getWinUpdatesInfo,
 )
-from client.utils import configify
+
+from client.utils import configify, logify
 
 
 def getSystemInfo():
@@ -49,7 +53,7 @@ def getSystemInfo():
         return sysInfo
 
     except subprocess.CalledProcessError as e:
-        print(e)
+        logify.error(e)
         return {}
 
 
@@ -74,6 +78,33 @@ def getNetworkAdapterInfo():
     return interfaces
 
 
+def getTimeZone():
+    # Get the local timezone
+    local_timezone = get_localzone()
+    return str(local_timezone)
+
+
+def getPublicIPAddress():
+    # Use a public API to get the public IP address
+    try:
+        response = requests.get("https://api.ipify.org?format=json")
+        response.raise_for_status()
+        data = response.json()
+        return data["ip"]
+    except requests.RequestException as e:
+        logify.error(e)
+        return None
+
+
+def saveToJson():
+    info = get()
+    with open(
+        os.path.join(os.path.dirname(__file__), "..", "test", "getInfo-output.json"),
+        "w",
+    ) as f:
+        f.write(info.dumps(info, indent=4))
+
+
 def get():
     info = {}
 
@@ -85,20 +116,20 @@ def get():
     info["domainName"] = oemInfo["domainName"]
     info["domainType"] = oemInfo["domainType"]
     info["userName"] = os.getlogin()
+    info["timeZone"] = getTimeZone()
+    info["publicIpAddress"] = getPublicIPAddress()
     info["dataFetchedTime"] = datetime.datetime.now().strftime("%d-%m-%Y %H:%M:%S")
     info["networkInfo"] = getNetworkAdapterInfo()
 
     wmi = win32com.client.GetObject("winmgmts:")
 
     info["assetInfo"] = getAssetInfo.get(wmi)
-    info["clockSyncInfo"] = getClockSyncInfo.get(wmi)
+    info["clockSyncInfo"] = getClockSyncInfo.get(info["timeZone"])
 
-    mUrls = _config["static"]["maliciousUrls"]
-    # info["controlOfInternetInfo"] = getControlOfInternet.get(mUrls)
+    info["controlOfInternetInfo"] = getControlOfInternet.get(_config)
 
-    # info["installedApplications"] = getInstalledApps.get(wmi)
+    info["installedApplications"] = getApplicationsInfo.get(wmi, _config)
 
-    return json.dumps(info, indent=4)
+    info["installedWinUpdates"] = getWinUpdatesInfo.get()
 
-
-print(get())
+    return json

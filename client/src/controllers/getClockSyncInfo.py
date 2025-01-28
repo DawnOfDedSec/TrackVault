@@ -6,9 +6,6 @@ import psutil
 import socket
 import re
 import os
-import sys
-
-sys.path.append(os.path.join(os.path.dirname(__file__), "..", "..", "utils"))
 
 from client.utils import logify
 
@@ -101,14 +98,15 @@ def getNtpInfo():
         return None
 
 
-def getWorldApiTime():
+def getWorldApiTime(timeZone="Asia/Kolkata"):
 
     try:
         # Use a public API to get the current time
-        response = requests.get("http://worldtimeapi.org/api/ip")
-        data = response.json()
-        actual_time_str = data["datetime"]
-        return datetime.datetime.fromisoformat(actual_time_str)
+        res = requests.get(
+            "https://www.timeapi.io/api/time/current/zone?timeZone=" + timeZone
+        )
+        data = res.json()
+        return datetime.datetime.fromisoformat(data["dateTime"])
 
     except requests.RequestException as e:
         logify.error(str(e))
@@ -164,7 +162,7 @@ def getNtpPeers():
     return ntp_peers
 
 
-def get(wmi):
+def get( timeZone):
     info = {}
 
     oemInfo = getSystemInfo()
@@ -179,7 +177,7 @@ def get(wmi):
     # Get NTP details
     info["ntpStatusInfo"] = getNtpInfo()
 
-    worldApiTime = getWorldApiTime()
+    worldApiTime = getWorldApiTime(timeZone)
     if worldApiTime:
         # Fetch actual time from the API
         info["worldApiTime"] = worldApiTime.strftime("%d-%m-%Y %H:%M:%S")
@@ -189,16 +187,22 @@ def get(wmi):
         # Fetch actual time from the API
         info["ntpPoolTime"] = ntpPoolTime.strftime("%d-%m-%Y %H:%M:%S")
 
-    systemTime = getSystemTime()
-    if systemTime:
+    curSystemTime = getSystemTime()
+    if curSystemTime:
         # Get the system time
-        info["currentSystemTime"] = systemTime.strftime("%d-%m-%Y %H:%M:%S")
+        info["currentSystemTime"] = curSystemTime.strftime("%d-%m-%Y %H:%M:%S")
 
     # Calculate the time difference
     if worldApiTime:
-        info["timeDifference"] = int(systemTime.timestamp) - int(worldApiTime.timestamp)
+        info["timeDifference"] = str(
+            datetime.timedelta(-1, 0, 0, 0, 0, 24) - (curSystemTime - worldApiTime)
+        )
+    elif ntpPoolTime:
+        info["timeDifference"] = str(
+            datetime.timedelta(-1, 0, 0, 0, 0, 24) - (curSystemTime - ntpPoolTime)
+        )
     else:
-        info["timeDifference"] = int(systemTime.timestamp) - int(ntpPoolTime.timestamp)
+        info["timeDifference"] = "N/A"
 
     # Get NTP Peers details
     info["ntpPeers"] = getNtpPeers()

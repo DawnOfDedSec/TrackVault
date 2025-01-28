@@ -1,0 +1,1 @@
+python ..\client\src\getInfo.py

@@ -1,0 +1,77 @@
+{
+    "configVersion": "1.0.0",
+    "server": {
+        "status": "enabled",
+        "host": "127.0.0.1",
+        "port": 8088,
+        "url": "",
+        "interval": 60
+    },
+    "mongoDb": {
+        "status": "enabled",
+        "host": "127.0.0.1",
+        "port": 8088,
+        "url": "",
+        "token": "",
+        "interval": 60
+    },
+    "localFile": {
+        "status": "disabled",
+        "folderLocation": "",
+        "interval": 60
+    },
+    "oAuthToken": "",
+    "secretKey": "",
+    "options": {
+        "autoUpdateMaliciousUrls": "true",
+        "autoUpdateSuspiciousFiles": "true",
+        "maxMaliciousUrlsCheck": 25,
+        "maxSuspiciousFilesCheck": 25
+    },
+    "static": {
+        "suspiciousFiles": [
+            "partyticket",
+            "gootkit",
+            "collectorgoomba",
+            "lumma",
+            "shurl0ckr",
+            "xdspy",
+            "freenki",
+            "dboxagent",
+            "industrial_spy",
+            "anydesk"
+        ],
+        "maliciousUrls": [
+            "http://jvqdkhqymhuyqhdajrix.com/",
+            "http://laserkr.com/",
+            "https://jkedunews.com/",
+            "https://ph.alessandrodelpiero.eu/"
+        ]
+    },
+    "dynamic": {
+        "fetchedMaliciousUrls": [
+            "https://tiemokodoumbia.com/",
+            "http://slavec.duckdns.org/",
+            "https://cocojambo.collector-steal.ga/",
+            "http://thelooptravels.com/",
+            "http://mendexie.com/",
+            "http://drop-box.top/",
+            "http://limrasindia.com/",
+            "https://eesss.online/",
+            "https://jardinmisamiguitos.cl/",
+            "http://gamee.top/"
+        ],
+        "fetchedSuspiciousFiles": [
+            "keona",
+            "aesrt",
+            "blackkingdom_ransomware",
+            "pss",
+            "sugarush",
+            "wscspl",
+            "mispadu",
+            "matiex",
+            "cuba",
+            "phandoor"
+        ]
+    }
+}
