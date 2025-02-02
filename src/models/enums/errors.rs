@@ -1,3 +1,5 @@
+use rusqlite;
+use std::io;
 use thiserror::Error;
 
 #[derive(Error, Debug)]
@@ -20,6 +22,8 @@ pub enum TokenDatabaseError {
     CantPrepareQuery(rusqlite::Error),
     #[error("SQlite database can't connect to the database: \'{0}\' -> {1}")]
     SQLiteConnectionError(String, rusqlite::Error),
+    #[error("SQlite database can't execute to the database: \'{0}\' -> {1}")]
+    CantExecuteQuery(String, rusqlite::Error),
 }
 
 #[derive(Error, Debug)]
@@ -32,4 +36,6 @@ pub enum ApiError {
     MissingBearerToken,
     #[error("Api Server faced an internal issue: \'{0}\'")]
     InternalServerError(String),
+    #[error("Api Server faced an runtime issue: \'{0}\'")]
+    RuntimeServerError(io::Error),
 }

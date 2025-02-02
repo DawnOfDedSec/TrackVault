@@ -3,7 +3,7 @@ use std::{env, time::Duration};
 use actix_web::{get, web, HttpRequest, HttpResponse, Responder};
 
 use crate::{
-    classes::TokenMetadata,
+    classes::{LogManager, TokenMetadata},
     models::{ApiEchoResponse, ApiError, AppState},
     utils::{get_latency, to_base64},
 };
@@ -11,7 +11,7 @@ use crate::{
 #[get("/api/echo")]
 async fn get_api_echo(app_state: web::Data<AppState>, req: HttpRequest) -> impl Responder {
     let token_header = req.headers().get("Authorization");
-    let token_manager = app_state.token_manager.lock().unwrap();
+    let token_manager = app_state.token_database.lock().unwrap();
 
     if let Some(token_header) = token_header {
         match TokenMetadata::parse(
@@ -29,8 +29,11 @@ async fn get_api_echo(app_state: web::Data<AppState>, req: HttpRequest) -> impl 
                     ),
                     host_id: token.id.clone(),
                 }),
-                Err(_) => HttpResponse::Unauthorized()
-                    .body(ApiError::UnAuthorizedToken(tc.id.clone()).to_string()),
+                Err(err) => {
+                    LogManager::eprint(Some("API-Error"), &err);
+                    HttpResponse::Unauthorized()
+                        .body(ApiError::UnAuthorizedToken(tc.id.clone()).to_string())
+                }
             },
             Err(_) => HttpResponse::Unauthorized().body(
                 ApiError::InvalidToken(String::from(token_header.to_str().unwrap())).to_string(),
@@ -42,19 +45,19 @@ async fn get_api_echo(app_state: web::Data<AppState>, req: HttpRequest) -> impl 
 }
 
 #[get("/api/agents")]
-async fn get_api_hosts(app_state: web::Data<AppState>, req: HttpRequest) -> impl Responder {
+async fn get_api_agents(app_state: web::Data<AppState>, req: HttpRequest) -> impl Responder {
     let token_header = req.headers().get("Authorization");
-    let token_manager = app_state.token_manager.lock().unwrap();
+    let token_manager = app_state.token_database.lock().unwrap();
     let super_token = env::var("notSoSecureToken").unwrap();
 
     if let Some(token_header) = token_header {
         if &super_token == token_header.to_str().unwrap() {
             match token_manager.get_tokens() {
                 Ok(tokens) => HttpResponse::Ok().json(tokens),
-                Err(e) => {
-                    println!("[API-Error] {:?}", e);
+                Err(err) => {
+                    LogManager::eprint(Some("API-Error"), &err);
                     HttpResponse::InternalServerError()
-                        .body(ApiError::InternalServerError(e.to_string()).to_string())
+                        .body(ApiError::InternalServerError(err.to_string()).to_string())
                 }
             }
         } else {

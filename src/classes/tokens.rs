@@ -31,6 +31,19 @@ impl TokensDatabase {
         Connection::open(path)
     }
 
+    pub fn init(&self) -> Result<(), TokenDatabaseError> {
+        let conn = match self.connect() {
+            Ok(stmt) => stmt,
+            Err(e) => return Err(TokenDatabaseError::CantPrepareQuery(e)),
+        };
+
+        let sql = "CREATE TABLE IF NOT EXISTS Tokens ( id TEXT PRIMARY KEY, exp INTEGER NOT NULL )";
+        match conn.execute(sql, []) {
+            Ok(_) => Ok(()),
+            Err(e) => Err(TokenDatabaseError::CantExecuteQuery(String::from(sql), e)),
+        }
+    }
+
     pub fn get_tokens(&self) -> Result<Vec<TokenMetadata>, TokenDatabaseError> {
         let conn = match self.connect() {
             Ok(stmt) => stmt,

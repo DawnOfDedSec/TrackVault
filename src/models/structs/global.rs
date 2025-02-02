@@ -12,5 +12,5 @@ pub struct ApiEchoResponse {
 
 #[derive(Clone)]
 pub struct AppState {
-    pub token_manager: Arc<Mutex<TokensDatabase>>,
+    pub token_database: Arc<Mutex<TokensDatabase>>,
 }
