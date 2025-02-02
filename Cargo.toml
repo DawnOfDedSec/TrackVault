@@ -12,5 +12,6 @@ jwt = "0.16.0"
 actix-web = "4.9.0"
 tokio = "1.43.0"
 thiserror = "2.0.11"
-rusqlite = "0.33.0"
+rusqlite = { version = "0.33.0", features = ["bundled"] }
 base64 = "0.22.1"
+dotenv = "0.15.0"

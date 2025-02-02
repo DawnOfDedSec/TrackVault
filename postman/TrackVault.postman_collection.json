@@ -1,0 +1,116 @@
+{
+	"info": {
+		"_postman_id": "fd24a588-be17-4cb6-a075-7bb7462314ee",
+		"name": "TrackVault",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "41732903"
+	},
+	"item": [
+		{
+			"name": "Home",
+			"item": [
+				{
+					"name": "/",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Internal Api",
+			"item": [
+				{
+					"name": "/api",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/echo",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/api/echo",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"echo"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/agents",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Root-Authorization",
+								"value": "notSoSecureToken",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/api/agents",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"agents"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

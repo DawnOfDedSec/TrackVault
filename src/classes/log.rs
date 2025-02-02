@@ -14,10 +14,10 @@ impl LogManager {
     }
 
     pub fn print(category: Option<&str>, msg: &str) {
-        println!("[{}] {}", category.unwrap_or("Others"), msg);
+        println!("✅ [{}] {}", category.unwrap_or("Others"), msg);
     }
 
     pub fn eprint<E: fmt::Debug + fmt::Display>(category: Option<&str>, err: E) {
-        println!("[{}] {:?}", category.unwrap_or("Others"), err);
+        println!("⭕ [{}] {:?}", category.unwrap_or("Others"), err);
     }
 }
