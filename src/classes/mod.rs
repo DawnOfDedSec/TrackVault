@@ -1,5 +1,5 @@
 pub mod tokens;
-pub mod log;
+pub mod logging;
 
 pub use self::tokens::*;
-pub use self::log::*;
+pub use self::logging::*;

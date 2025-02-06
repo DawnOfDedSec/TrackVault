@@ -15,9 +15,3 @@ thiserror = "2.0.11"
 rusqlite = { version = "0.33.0", features = ["bundled"] }
 base64 = "0.22.1"
 dotenv = "0.15.0"
-
-
-[workspace]
-members = [
-    "agent",
-]
